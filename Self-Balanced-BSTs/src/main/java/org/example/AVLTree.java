@@ -282,5 +282,17 @@ public class AVLTree<T extends Comparable<T>> implements Iterable<T>, SelfBalanc
         System.out.println("Insert 50 (left rotation - right-right case)");
         tree2.insert(50);
         System.out.println(tree2.toString());
+
+        AVLTree<String> tree = new AVLTree<>();
+        tree.insert("Ahmed");
+        tree.insert("Samaa");
+        tree.insert("Maged");
+        tree.insert("Fares");
+        tree.insert("Sama");
+        tree.insert("Nour");
+        System.out.println(tree.toString());
+        for(String s : tree){
+            System.out.println(s);
+        }
     }
 }

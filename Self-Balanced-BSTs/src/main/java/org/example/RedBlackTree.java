@@ -624,5 +624,16 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         for (Integer value : rbTree) {
             System.out.println(value);
         }
+        RedBlackTree<String> redBlackTree = new RedBlackTree<>();
+        redBlackTree.insert("Ahmed");
+        redBlackTree.insert("Samaa");
+        redBlackTree.insert("Maged");
+        redBlackTree.insert("Fares");
+        redBlackTree.insert("Sama");
+        redBlackTree.insert("Nour");
+        System.out.println(redBlackTree.toString());
+        for(String s : redBlackTree){
+            System.out.println(s);
+        }
     }
 }
