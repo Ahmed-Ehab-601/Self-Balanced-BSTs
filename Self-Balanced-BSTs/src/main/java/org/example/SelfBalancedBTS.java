@@ -1,13 +1,9 @@
 package org.example;
 
-import java.util.ArrayList;
-
-public interface SelfBalancedBTS {
-
-    public boolean insert(String key);
-    public boolean delete(String key);
-    public boolean search(String key);
-    public boolean insert(ArrayList<String> keyList);
-    public boolean delete(ArrayList<String> keyList);
-
+public interface SelfBalancedBTS<T> {
+    boolean insert(T key);
+    boolean delete(T key);
+    boolean search(T key);
+    int height();
+    int size();
 }

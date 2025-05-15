@@ -2,157 +2,250 @@ package org.example;
 
 import java.util.*;
 
-public class AVLTree implements SelfBalancedBTS {
 
-    private  int n;
+public class AVLTree<T extends Comparable<T>>  {
 
-    public AVLTree(int n) {
-        this.n = n;
 
+    private int n;
+    private Node<T> root;
+
+
+    private void update(Node<T> node) {
+        if (node == null) return;
+
+        int leftHeight = -1, rightHeight = -1;
+        if (node.left != null) leftHeight = node.left.height;
+        if (node.right != null) rightHeight = node.right.height;
+        node.height = 1 + Math.max(leftHeight, rightHeight);
+        node.bf = rightHeight - leftHeight;
     }
 
-    public AVLTree() {
+    private Node<T> rightRotation(Node<T> node) {
+        Node<T> leftChild = node.left;
+        node.left = leftChild.right;
+        leftChild.right = node;
+        update(node);
+        update(leftChild);
+        return leftChild;
+    }
 
+    private Node<T> leftRotation(Node<T> node) {
+        Node<T> rightChild = node.right;
+        node.right = rightChild.left;
+        rightChild.left = node;
+        update(node);
+        update(rightChild);
+        return rightChild;
+    }
+
+    private Node<T> balance(Node<T> node) {
+        if (node == null) return null;
+
+        if (node.bf == -2) { // Left heavy
+            if (node.left != null && node.left.bf <= 0) {
+                // Left-Left Case
+                return rightRotation(node);
+            } else if (node.left != null) {
+                // Left-Right Case
+                node.left = leftRotation(node.left);
+                return rightRotation(node);
+            }
+        } else if (node.bf == 2) { // Right heavy
+            if (node.right != null && node.right.bf >= 0) {
+                // Right-Right Case
+                return leftRotation(node);
+            } else if (node.right != null) {
+                // Right-Left Case
+                node.right = rightRotation(node.right);
+                return leftRotation(node);
+            }
+        }
+
+        return node;
+    }
+
+    private Node<T> insert(Node<T> node, T key) {
+        if (node == null) return new Node<>(key);
+        int cmp = key.compareTo(node.getKey());
+        if (cmp > 0) {
+            node.right = insert(node.right, key);
+        } else if (cmp < 0) {
+
+            node.left = insert(node.left, key);
+        } else {
+            // Duplicate Key
+            return node;
+        }
+
+        update(node);
+        return balance(node);
     }
 
 
+    public boolean insert(T key) {
+        if (key == null) return false;
+        if (search(key)) return false;
 
-    @Override
-    public boolean insert(String key){
+        this.n++;
+        this.root = this.insert(this.root, key);
         return true;
-
     }
-    @Override
-    public boolean delete(String key){
-            return true;
-    }
-    @Override
-    public boolean search(String key){
 
+    private Node<T> getMax(Node<T> node) {
+        if (node == null) return null;
+        while (node.right != null)
+            node = node.right;
+        return node;
+    }
+
+    private Node<T> delete(Node<T> node, T key) {
+        if (node == null) return null;
+
+        int cmp = key.compareTo(node.getKey());
+
+        if (cmp > 0) {
+            node.right = this.delete(node.right, key);
+        } else if (cmp < 0) {
+            node.left = this.delete(node.left, key);
+        } else {
+            // Found the node to delete
+            if (node.left == null && node.right == null) {
+                // Case 1: Leaf node
+                return null;
+            } else if (node.left == null) {
+
+                return node.right;
+            } else if (node.right == null) {
+
+                return node.left;
+            } else {
+
+                Node<T> successor = getMax(node.left);
+                node.key = successor.key;
+                node.left = delete(node.left, successor.key);
+            }
+        }
+
+        update(node);
+        return balance(node);
+    }
+
+
+    public boolean delete(T key) {
+        if (key == null || !search(key)) return false;
+
+        this.root = delete(this.root, key);
+        this.n--;
         return true;
-
-
     }
+
+    private Node<T> search(Node<T> node, T key) {
+        if (node == null) return null;
+
+        int cmp = key.compareTo(node.getKey());
+        if (cmp > 0) return search(node.right, key);
+        else if (cmp < 0) return search(node.left, key);
+        else return node;
+    }
+
+
+    public boolean search(T key) {
+        if (key == null) return false;
+        return search(this.root, key) != null;
+    }
+
+
+    public int height() {
+        return root == null ? 0 : root.height;
+    }
+
+
+    public int size() {
+        return this.n;
+    }
+
+//    public java.util.Iterator<T> iterator() {
+//
+//        final int expectedNodeCount = n;
+//        final java.util.Stack<Node<T>> stack = new java.util.Stack<>();
+//        stack.push(root);
+//
+//        return new java.util.Iterator<T>() {
+//            Node<T> trav = root;
+//
+//            @Override
+//            public boolean hasNext() {
+//                if (expectedNodeCount != n) throw new java.util.ConcurrentModificationException();
+//                return root != null && !stack.isEmpty();
+//            }
+//
+//            @Override
+//            public T next() {
+//
+//                if (expectedNodeCount != n) throw new java.util.ConcurrentModificationException();
+//
+//                while (trav != null && trav.left != null) {
+//                    stack.push(trav.left);
+//                    trav = trav.left;
+//                }
+//
+//                Node<T> node = stack.pop();
+//
+//                if (node.right != null) {
+//                    stack.push(node.right);
+//                    trav = node.right;
+//                }
+//
+//                return node.key;
+//            }
+//
+//            @Override
+//            public void remove() {
+//                throw new UnsupportedOperationException();
+//            }
+//        };
+//
+//    }
+
     @Override
-    public boolean insert(ArrayList<String> keyList){
-     return true;
+    public String toString() {
+        return TreePrinter.getTreeDisplay(root);
     }
 
-    @Override
-    public boolean delete(ArrayList<String> keyList){
-       return true;
-    }
-
-    public static void test1(){
-        AVLTree hash = new AVLTree(3);
-        hash.insert("cat");
-        hash.insert("samaa");
-        hash.insert("sama");
-        hash.insert("nour");
-        hash.insert("ahmed");
-        hash.insert("maged");
-        hash.insert("hello");
-        hash.insert("ziad");
-        hash.insert("dog");
-        hash.insert("fares");
-        hash.search("nour");
-        hash.search("samaa");
-        hash.search("sama");
-        hash.search("cat");
-        hash.delete("cat");
-        hash.delete("cat");
-        hash.search("cat");
-    }
-    public static void test2(){
-        AVLTree hash = new AVLTree(4);
-        hash.insert("cat");
-        hash.insert("hat");
-        hash.insert("sam");
-        hash.insert("nor");
-        hash.insert("als");
-    }
-    public static void test4(){
-        ArrayList<String> test = new ArrayList<>(Arrays.asList("A","B","C","D","E","F","G","H"));
-        AVLTree hash = new AVLTree(4);
-        hash.insert("A");
-        hash.insert("D");
-        hash.insert(test);// Should say that A , D  Already found .
-
-
-
-    }
-     public static void test3(){
-        ArrayList<String> list = new ArrayList<>();
-        list.add("ahmed");
-        list.add("sama");
-        list.add("samaa");
-        list.add("nour");
-        list.add("maged");
-
-        AVLTree hash = new AVLTree(3);
-        hash.insert(list);
-        hash.search("ahmed");
-        hash.search("sama");
-        hash.search("samaa");
-        hash.delete("nour");
-        hash.search("nour");
-
-
-     }
-
-
-    public  static void test5(){
-        AVLTree hash = new AVLTree(5);
-        hash.insert("sama");
-        hash.insert("samaa");
-        ArrayList<String> testlist =new ArrayList<>();
-        testlist.add("sama");
-        testlist.add("ahmed");
-        testlist.add("samaa");
-        testlist.add("lina");
-        testlist.add("LAILA");
-        hash.insert(testlist);
-
-    }
-
-    public  static void test6(){
-        AVLTree hash = new AVLTree(5);
-        ArrayList<String> testlist =new ArrayList<>();
-        testlist.add("sama");
-        testlist.add("ahmed");
-        testlist.add("samaa");
-        testlist.add("lina");
-        testlist.add("Lela");
-        hash.insert(testlist);
-        testlist.add("66");
-        hash.delete(testlist);
-        testlist.clear();
-        hash.insert(testlist);
-        hash.delete(testlist);
-        hash.insert("sama");
-
-    }
 
     public static void main(String[] args) {
-        System.out.println("====================================================Test1======================================================= ");
-        test1();
-        System.out.println("====================================================Test2======================================================= ");
-        test2();
-        System.out.println("====================================================Test3======================================================= ");
-        test3();
-        System.out.println("====================================================Test4======================================================= ");
-        test4();
+        // Test case 1: Basic insertion and tree structure
+        System.out.println("========== Test Case 1: Basic Insertion ==========");
+        AVLTree<Integer> tree1 = new AVLTree<>();
+        tree1.insert(10);
+        tree1.insert(5);
+        tree1.insert(15);
+        tree1.insert(3);
+        tree1.insert(7);
+        //tree1.toString();
+        System.out.println("Height: " + tree1.height());
+        System.out.println("Size: " + tree1.size());
 
-        System.out.println("====================================================Test5======================================================= ");
-        test5();
+        // Test case 2: Testing rotations
+        System.out.println("\n========== Test Case 2: Testing Rotations ==========");
+        AVLTree<Integer> tree2 = new AVLTree<>();
+        System.out.println("Inserting elements that trigger rotations:");
+        System.out.println("Insert 30");
+        tree2.insert(30);
+        System.out.println("Insert 20 (should trigger no rotation)");
+        tree2.insert(20);
+        System.out.println(tree2.toString());
 
-        System.out.println("====================================================Test6======================================================= ");
-        test6();
-
+        System.out.println("Insert 10 (should trigger right rotation - left-left case)");
+        tree2.insert(10);
+        System.out.println(tree2.toString());
+        System.out.println("Insert 25 (no rotation)");
+        tree2.insert(25);
+        System.out.println("Insert 40 (no rotation)");
+        tree2.insert(40);
+        System.out.println(tree2.toString());
+        System.out.println("Insert 50 (left rotation - right-right case)");
+        tree2.insert(50);
+        System.out.println(tree2.toString());
     }
-
-
-
-
-
 }
