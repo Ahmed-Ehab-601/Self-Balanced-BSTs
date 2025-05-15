@@ -3,7 +3,7 @@ package org.example;
 import java.util.*;
 
 
-public class AVLTree<T extends Comparable<T>>  {
+public class AVLTree<T extends Comparable<T>> implements Iterable<T>, SelfBalancedBTS<T> {
 
 
     private int n;
@@ -81,7 +81,7 @@ public class AVLTree<T extends Comparable<T>>  {
         return balance(node);
     }
 
-
+    @Override
     public boolean insert(T key) {
         if (key == null) return false;
         if (search(key)) return false;
@@ -130,7 +130,7 @@ public class AVLTree<T extends Comparable<T>>  {
         return balance(node);
     }
 
-
+    @Override
     public boolean delete(T key) {
         if (key == null || !search(key)) return false;
 
@@ -148,70 +148,105 @@ public class AVLTree<T extends Comparable<T>>  {
         else return node;
     }
 
-
+    @Override
     public boolean search(T key) {
         if (key == null) return false;
         return search(this.root, key) != null;
     }
 
-
+    @Override
     public int height() {
         return root == null ? 0 : root.height;
     }
+    @Override
+    public ArrayList<Integer> insert(ArrayList<T> keys){
+        int newElements = 0;
+        int oldElements = 0;
+        for(T key : keys){
+            if(insert(key)){
+                newElements++;
+            }else{
+                oldElements++;
+            }
+        }
+        ArrayList<Integer> ans = new ArrayList<>();
+        ans.add(newElements);
+        ans.add(oldElements);
+
+        return ans;
+    }
+
+    @Override
+    public ArrayList<Integer> delete(ArrayList<T> keys) {
+        int newElements = 0;
+        int oldElements = 0;
+        for(T key : keys){
+            if(delete(key)){
+                newElements++;
+            }else{
+                oldElements++;
+            }
+        }
+        ArrayList<Integer> ans = new ArrayList<>();
+        ans.add(newElements);
+        ans.add(oldElements);
+
+        return ans;
+    }
 
 
+    @Override
     public int size() {
         return this.n;
     }
+    @Override
+    public java.util.Iterator<T> iterator() {
 
-//    public java.util.Iterator<T> iterator() {
-//
-//        final int expectedNodeCount = n;
-//        final java.util.Stack<Node<T>> stack = new java.util.Stack<>();
-//        stack.push(root);
-//
-//        return new java.util.Iterator<T>() {
-//            Node<T> trav = root;
-//
-//            @Override
-//            public boolean hasNext() {
-//                if (expectedNodeCount != n) throw new java.util.ConcurrentModificationException();
-//                return root != null && !stack.isEmpty();
-//            }
-//
-//            @Override
-//            public T next() {
-//
-//                if (expectedNodeCount != n) throw new java.util.ConcurrentModificationException();
-//
-//                while (trav != null && trav.left != null) {
-//                    stack.push(trav.left);
-//                    trav = trav.left;
-//                }
-//
-//                Node<T> node = stack.pop();
-//
-//                if (node.right != null) {
-//                    stack.push(node.right);
-//                    trav = node.right;
-//                }
-//
-//                return node.key;
-//            }
-//
-//            @Override
-//            public void remove() {
-//                throw new UnsupportedOperationException();
-//            }
-//        };
-//
-//    }
+        final int expectedNodeCount = n;
+        final java.util.Stack<Node<T>> stack = new java.util.Stack<>();
+        stack.push(root);
+
+        return new java.util.Iterator<T>() {
+            Node<T> trav = root;
+
+            @Override
+            public boolean hasNext() {
+                if (expectedNodeCount != n) throw new java.util.ConcurrentModificationException();
+                return root != null && !stack.isEmpty();
+            }
+
+            @Override
+            public T next() {
+
+                if (expectedNodeCount != n) throw new java.util.ConcurrentModificationException();
+
+                while (trav != null && trav.left != null) {
+                    stack.push(trav.left);
+                    trav = trav.left;
+                }
+
+                Node<T> node = stack.pop();
+
+                if (node.right != null) {
+                    stack.push(node.right);
+                    trav = node.right;
+                }
+
+                return node.key;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+
+    }
 
     @Override
     public String toString() {
         return TreePrinter.getTreeDisplay(root);
     }
-
 
     public static void main(String[] args) {
         // Test case 1: Basic insertion and tree structure
