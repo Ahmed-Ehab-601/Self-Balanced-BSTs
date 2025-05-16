@@ -156,7 +156,7 @@ public class AVLTree<T extends Comparable<T>> implements Iterable<T>, SelfBalanc
 
     @Override
     public int height() {
-        return root == null ? 0 : root.height;
+        return root == null ? 0 : root.height+1;
     }
     @Override
     public ArrayList<Integer> insert(ArrayList<T> keys){
