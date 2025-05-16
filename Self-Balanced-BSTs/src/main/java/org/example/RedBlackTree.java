@@ -1,20 +1,11 @@
 package org.example;
 
 import java.util.ArrayList;
-
-/**
- * A Red-Black Tree implementation with generic comparable types.
- * This implementation follows the classic approach with a NIL sentinel node.
- */
 public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfBalancedBTS<T> {
 
-    // Color constants
     public static final boolean RED = true;
     public static final boolean BLACK = false;
 
-    /**
-     * Node class representing elements in the Red-Black Tree.
-     */
     public class Node implements PrintableNode {
         private boolean color = RED;  // Default color for new nodes is RED
         private T value;
@@ -92,18 +83,11 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         }
     }
 
-    // The root node of the RB tree
+
     public Node root;
-
-    // Sentinel NIL node used for leaf nodes and parent of root
     private final Node NIL;
-
-    // Tracks the number of nodes in the tree
     private int nodeCount = 0;
 
-    /**
-     * Constructs an empty Red-Black Tree.
-     */
     public RedBlackTree() {
         NIL = new Node(BLACK, null);
         NIL.setLeft(NIL);
@@ -112,42 +96,25 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         root = NIL;
     }
 
-    /**
-     * Returns the number of nodes in the tree.
-     */
     @Override
     public int size() {
         return nodeCount;
     }
 
-    /**
-     * Checks if the tree is empty.
-     */
     public boolean isEmpty() {
         return size() == 0;
     }
 
-    /**
-     * Checks if the tree contains the given value.
-     */
     public boolean contains(T value) {
         return search(value);
     }
 
-    /**
-     * Searches for a value in the tree.
-     * @param value The value to search for
-     * @return true if the value is found, false otherwise
-     */
     @Override
     public boolean search(T value) {
         if (value == null) return false;
         return searchNode(value, root) != NIL;
     }
 
-    /**
-     * Helper method to search for a node containing the given value.
-     */
     private Node searchNode(T value, Node current) {
         if (current == NIL) return NIL;
 
@@ -157,18 +124,12 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         else return searchNode(value, current.getRight());
     }
 
-    /**
-     * Inserts a value into the tree.
-     * @param value The value to insert
-     * @return true if the value was inserted, false if it already exists
-     */
     @Override
     public boolean insert(T value) {
         if (value == null) {
             throw new IllegalArgumentException("Red-Black tree does not allow null values.");
         }
 
-        // Find where to insert the new node
         Node parent = NIL;
         Node current = root;
 
@@ -186,7 +147,6 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
             }
         }
 
-        // Create the new node
         Node newNode = new Node(value, RED, parent, NIL, NIL);
 
         // Link the new node to its parent
@@ -204,14 +164,12 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         return true;
     }
 
-    /**
-     * Restores the Red-Black properties after insertion.
-     */
     private void insertFixup(Node node) {
         Node uncle;
 
         // Continue until we reach the root or the parent is black
         while (node.getParent().getColor() == RED) {
+            // Parent is Left Child
             if (node.getParent() == node.getParent().getParent().getLeft()) {
                 uncle = node.getParent().getParent().getRight();
 
@@ -265,9 +223,6 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         root.setColor(BLACK);
     }
 
-    /**
-     * Performs a left rotation on the given node.
-     */
     private void leftRotate(Node x) {
         Node y = x.getRight();
         x.setRight(y.getLeft());
@@ -290,9 +245,6 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         x.setParent(y);
     }
 
-    /**
-     * Performs a right rotation on the given node.
-     */
     private void rightRotate(Node y) {
         Node x = y.getLeft();
         y.setLeft(x.getRight());
@@ -315,11 +267,6 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         y.setParent(x);
     }
 
-    /**
-     * Deletes a value from the tree.
-     * @param value The value to delete
-     * @return true if the value was deleted, false if it doesn't exist
-     */
     @Override
     public boolean delete(T value) {
         if (value == null) return false;
@@ -332,9 +279,6 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         return true;
     }
 
-    /**
-     * Helper method to delete a node from the tree.
-     */
     private void deleteNode(Node z) {
         Node x;
         Node y = z;
@@ -458,9 +402,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         v.setParent(u.getParent());
     }
 
-    /**
-     * Finds the minimum value node in a subtree.
-     */
+
     private Node findMinimum(Node node) {
         while (node.getLeft() != NIL) {
             node = node.getLeft();
@@ -468,27 +410,12 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
         return node;
     }
 
-    /**
-     * Finds the maximum value node in a subtree.
-     */
-    // private Node findMaximum(Node node) {
-    //     while (node.getRight() != NIL) {
-    //         node = node.getRight();
-    //     }
-    //     return node;
-    // }
-
-    /**
-     * Returns the height of the tree.
-     */
     @Override
     public int height() {
         return calculateHeight(root);
     }
 
-    /**
-     * Helper method to calculate the height of a subtree.
-     */
+
     public int calculateHeight(Node node) {
         if (node == NIL) {
             return 0;
