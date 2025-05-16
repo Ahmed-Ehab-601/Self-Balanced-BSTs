@@ -7,7 +7,7 @@ public class AVLTree<T extends Comparable<T>> implements Iterable<T>, SelfBalanc
 
 
     private int n;
-    private Node<T> root;
+    public Node<T> root;
 
 
     private void update(Node<T> node) {
@@ -129,7 +129,14 @@ public class AVLTree<T extends Comparable<T>> implements Iterable<T>, SelfBalanc
         update(node);
         return balance(node);
     }
-
+    public ArrayList<T> inorderTraversalList(Node<T> node, ArrayList<T> list) {
+        if (node != null) {
+            inorderTraversalList(node.left, list);
+            list.add(node.key);
+            inorderTraversalList(node.right, list);
+        }
+        return list;
+    }
     @Override
     public boolean delete(T key) {
         if (key == null || !search(key)) return false;

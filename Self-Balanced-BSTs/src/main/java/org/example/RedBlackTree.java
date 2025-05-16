@@ -78,7 +78,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
             }
 
         }
-
+        
         public void setRight(Node right) {
             this.right = right;
         }
@@ -93,7 +93,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
     }
 
     // The root node of the RB tree
-    private Node root;
+    public Node root;
 
     // Sentinel NIL node used for leaf nodes and parent of root
     private final Node NIL;
@@ -471,12 +471,12 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
     /**
      * Finds the maximum value node in a subtree.
      */
-    private Node findMaximum(Node node) {
-        while (node.getRight() != NIL) {
-            node = node.getRight();
-        }
-        return node;
-    }
+    // private Node findMaximum(Node node) {
+    //     while (node.getRight() != NIL) {
+    //         node = node.getRight();
+    //     }
+    //     return node;
+    // }
 
     /**
      * Returns the height of the tree.
@@ -489,7 +489,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
     /**
      * Helper method to calculate the height of a subtree.
      */
-    private int calculateHeight(Node node) {
+    public int calculateHeight(Node node) {
         if (node == NIL) {
             return 0;
         }
@@ -535,7 +535,14 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<T>, SelfB
 
         return ans;
     }
-
+    public ArrayList<T> inorderTraversal(Node node, ArrayList<T> list) {
+        if (node != NIL) {
+            inorderTraversal(node.getLeft(), list);
+            list.add(node.getValue());
+            inorderTraversal(node.getRight(), list);
+        }
+        return list;
+    }
 
     /**
      * Returns an in-order iterator over the tree's elements.
