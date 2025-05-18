@@ -1,5 +1,5 @@
 import org.example.RedBlackTree;
-import org.example.helper;
+import org.example.Helper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import  java.lang.Math;             
@@ -14,7 +14,7 @@ public class RedBlackTest {
       int[] sizes = {10, 100, 500, 1000, 5000};
         for (int size : sizes) {
         RedBlackTree< Integer > tree  = new RedBlackTree<>();
-        ArrayList<Integer> list = helper.generateRandomArrayList(size, 1, 100);
+        ArrayList<Integer> list = Helper.generateRandomArrayList(size, 1, 100);
         tree.insert(list);
         Assertions.assertTrue(tree.height() <= 2 * Math.log(tree.size())/Math.log(2));
        
@@ -27,7 +27,7 @@ public class RedBlackTest {
        int[] sizes = {10, 100, 500, 1000, 5000};
         for (int size : sizes) {
         RedBlackTree< Integer > tree  = new RedBlackTree<>();
-        ArrayList<Integer> list = helper.generateRandomArrayList(size, 1, 100);
+        ArrayList<Integer> list = Helper.generateRandomArrayList(size, 1, 100);
         tree.insert(list);
         list.sort(null);
         ArrayList<Integer> treetoarray = new ArrayList<>();
@@ -41,7 +41,7 @@ public class RedBlackTest {
        int[] sizes = {10, 100, 500, 1000, 5000};
         for (int size : sizes) {
         RedBlackTree< Integer > tree  = new RedBlackTree<>();
-         ArrayList<Integer> list = helper.generateRandomArrayList(size, 1, 100);
+         ArrayList<Integer> list = Helper.generateRandomArrayList(size, 1, 100);
         tree.insert(list);
         tree.delete(list);
 
@@ -52,11 +52,21 @@ public class RedBlackTest {
         }   
 }
 }
-  @Test 
-  public void testemptyTree() {
+  @Test
+   void testSearch() {
+      System.out.println("==========================================Test for correctness for Search===========================================");
+      RedBlackTree< Integer > tree  = new RedBlackTree<>();
+      ArrayList<Integer> list = Helper.generateRandomArrayList(500, 1, 100);
+      tree.insert(list);
+      for(int i=0;i<list.size();i++){
+        Assertions.assertTrue(tree.search(list.get(i)));
+      }
+  }
+   @Test 
+   void testemptyTree() {
   RedBlackTree< Integer > tree  = new RedBlackTree<>();
   Assertions.assertEquals(tree.height(), 0);
-  ArrayList<Integer> list = helper.generateRandomArrayList(100, 1, 100);
+  ArrayList<Integer> list = Helper.generateRandomArrayList(100, 1, 100);
   Assertions.assertEquals(tree.delete(list).get(0),0);
   }
 
